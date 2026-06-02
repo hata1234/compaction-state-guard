@@ -1,0 +1,63 @@
+{
+  "id": "compaction-state-guard",
+  "name": "Compaction State Guard",
+  "version": "0.1.0",
+  "kind": "tool",
+  "description": "Captures current task state before session compaction and injects a post-compaction alignment checkpoint.",
+  "activation": { "onStartup": true },
+  "enabledByDefault": false,
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": { "type": "boolean", "default": true },
+      "statePath": {
+        "type": "string",
+        "default": "runtime/current-turn-state.json",
+        "description": "Workspace-relative or absolute path for the captured compaction state."
+      },
+      "maxMessages": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 20,
+        "default": 8
+      },
+      "maxSnippetChars": {
+        "type": "integer",
+        "minimum": 80,
+        "maximum": 1000,
+        "default": 320
+      },
+      "stateTtlMs": {
+        "type": "integer",
+        "minimum": 60000,
+        "maximum": 604800000,
+        "default": 86400000
+      },
+      "alwaysRequireAlignment": {
+        "type": "boolean",
+        "default": true
+      },
+      "captureGatewayStop": {
+        "type": "boolean",
+        "default": true,
+        "description": "Write a recovery checkpoint during gateway_stop so restarts get the same alignment guard."
+      },
+      "captureGatewayStart": {
+        "type": "boolean",
+        "default": true,
+        "description": "Refresh an existing checkpoint during gateway_start so the next prompt sees a restart trigger."
+      },
+      "captureBeforeReset": {
+        "type": "boolean",
+        "default": true,
+        "description": "Write a recovery checkpoint during before_reset for /new and /reset session resets."
+      },
+      "sensitivePatterns": {
+        "type": "array",
+        "items": { "type": "string" },
+        "default": ["AGENTS.md", "SECURITY.md", "SOUL.md", "USER.md", "MEMORY.md", "HEARTBEAT.md", "IRONRULES.md", "apply_patch", "commit", "gateway restart"]
+      }
+    }
+  }
+}
